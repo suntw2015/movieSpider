@@ -38,13 +38,22 @@ class spider extends Command
      */
     public function handle()
     {
-        $host = 'https://www.ygdy8.net/html/gndy/dyzz/index.html';
+        $host = 'https://www.ygdy8.net/html/gndy/dyzz/list_23_1.html';
+
+        $page = 10;
+
         $rules = [
-            'name' => ['a', 'text'],
-            'link' => ['a', 'href'],
+            'name' => ['a.ulink', 'text'],
+            'link' => ['a.ulink', 'href'],
         ];
-        $range = '.co_content8>ul>table';
-        $data = QueryList::get($host)->rules($rules)->range($range)->encoding('UTF-8','GB2312')->queryData();
-        print_r($data);
+        $range = '.co_content8>ul td>b';
+
+        for($i = 1; $i <= $page; $i++) {
+            $url = sprintf("https://www.ygdy8.net/html/gndy/dyzz/list_23_%d.html", $i);
+            $data = QueryList::get($host)->rules($rules)->range($range)->encoding('UTF-8','GB2312')->queryData();
+            foreach ($data as $item) {
+                printf("%30s %s", $item['name'], $item['link']);
+            }
+        }
     }
 }
