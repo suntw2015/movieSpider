@@ -40,7 +40,7 @@ class spider extends Command
     {
         $host = 'https://www.ygdy8.net/html/gndy/dyzz/list_23_1.html';
 
-        $page = 10;
+        $page = 1;
 
         $rules = [
             'name' => ['a.ulink', 'text'],
@@ -51,8 +51,12 @@ class spider extends Command
         for($i = 1; $i <= $page; $i++) {
             $url = sprintf("https://www.ygdy8.net/html/gndy/dyzz/list_23_%d.html", $i);
             $data = QueryList::get($host)->rules($rules)->range($range)->encoding('UTF-8','GB2312')->queryData();
+
             foreach ($data as $item) {
-                printf("%30s %s", $item['name'], $item['link']);
+                $start = mb_strpos($item['name'], "《");
+                $end = mb_strpos($item['name'], "》");
+                $item['name'] = mb_substr($item['name'], $start, $end-$start);
+                printf("%30s %s\n", $item['name'], $item['link']);
             }
         }
     }
